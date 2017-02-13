@@ -1,40 +1,34 @@
 import * as THREE from 'three'
+import { City, Cube, Building } from './City.js'
 
-console.log(THREE)
+var scene = new THREE.Scene()
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 
-var scene, camera, renderer;
-var geometry, material, mesh;
+var renderer = new THREE.WebGLRenderer()
+renderer.setSize(window.innerWidth, window.innerHeight)
+document.body.appendChild(renderer.domElement)
 
-init();
-animate();
+var geometry = new THREE.BoxGeometry(1, 1, 1)
+var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+var cube = new THREE.Mesh(geometry, material)
 
-function init() {
+const city = new City(1000)
+scene.add(city.cityMesh)
 
-    scene = new THREE.Scene();
+const building = new Building()
+scene.add(building.buildingMesh)
+camera.lookAt(
+	new THREE.Vector3(
+		building.buildingMesh.position.x,
+		building.buildingMesh.position.y,
+		building.buildingMesh.position.z
+	)
+);
+camera.position.z = 5
 
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-    camera.position.z = 1000;
-
-    geometry = new THREE.BoxGeometry( 200, 200, 200 );
-    material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-
-    mesh = new THREE.Mesh( geometry, material );
-    scene.add( mesh );
-
-    renderer = new THREE.WebGLRenderer();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-
-    document.body.appendChild( renderer.domElement );
-
+function render() {
+	requestAnimationFrame(render)
+	renderer.render(scene, camera)
 }
 
-function animate() {
-
-    requestAnimationFrame( animate );
-
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
-
-    renderer.render( scene, camera );
-
-}
+render()
